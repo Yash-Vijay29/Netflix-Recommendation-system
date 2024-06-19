@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Authentication</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+
+<body>
+  {% for message in messages %}
+  <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+    <strong> MESSAGE:</strong> {{ message }}
+    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+  {% endfor %}
+  <h1>Welcome to Netflix Movie Recommender</h1>
+  <script src="scripts.js"></script>
+  {% if user.is_authenticated %}
+  <h3>Hello {{ user.first_name }} </h3>
+  <h4>You are logged in!</h4>
+  <form method="post" action="{% url 'recommend' %}">
+    {% csrf_token %}
+    <label for="movie_title">Movie Titles:</label>
+    <input type="text" id="movie_titles" name="movie_titles" placeholder="e.g., Movie1, Movie2">
+    
+    <label for="preferred_languages">Preferred Languages:</label>
+    <input type="text" id="preferred_languages" name="preferred_languages" placeholder="e.g., English, Spanish">
+
+    <button type="submit">Get Recommendations</button>
+  </form>
+  {% if recommendations %}
+  <h2>Recommendations: </h2>
+    {% for movie in recommendations %}
+    <li>{{ movie }}</li>
+    {% endfor %}
+  {% endif %}
+  <button><a href="{% url 'signout' %}">Signout</a></button>
+  {% else %}
+  <button><a href="{% url 'signup' %}">Signup</a></button>
+  <button><a href="{% url 'signin' %}">Signin</a></button>
+  {% endif %}
+</body>
+
+</html>
