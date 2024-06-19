@@ -10,7 +10,7 @@ Summary: The movie summary contains textual information that can be used to comp
 Director, Writer, Actors: Names of directors, writers, and actors can also be used as features for content-based recommendations.
 Language: Language can be considered if you want to recommend movies in the user's preferred language.
 IMDb Score: IMDb scores can be used as weights to prioritize important words in the TF-IDF calculation.
-For Matrix Factorization (Collaborative Filtering):
+For Matrix Factorization (Collaborative Filtering)(using SVD):
 View Rating: User ratings of movies can be used as input for matrix factorization.
 IMDb Score: IMDb scores can also be used as input for matrix factorization to capture movie quality.
 Genres: You can encode genres as binary variables to capture user preferences for specific genres.
