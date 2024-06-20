@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Movie Details</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #141414;
+      color: #fff;
+      margin: 0;
+      padding: 0;
+    }
+
+    .container {
+      max-width: 800px;
+      margin: 50px auto;
+      padding: 20px;
+      background-color: #222;
+      border-radius: 10px;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+      display: flex; /* Display flex to align image and details side by side */
+    }
+
+    .image {
+      flex: 0 0 200px; /* Fixed width for the image */
+      margin-right: 20px;
+    }
+
+    img {
+      max-width: 100%;
+      border-radius: 5px;
+    }
+
+    .details {
+      flex: 1; /* Take remaining space */
+    }
+
+    h1 {
+      font-size: 36px;
+      margin-bottom: 20px;
+      text-align: center;
+      color: #e50914;
+    }
+
+    h2 {
+      font-size: 24px;
+      margin-bottom: 10px;
+      color: #fff;
+    }
+
+    p {
+      margin: 10px 0;
+    }
+
+    strong {
+      font-weight: bold;
+      color: #e50914;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="image">
+      <img src="{{ movie.Image }}" alt="{{ movie.Title }}">
+    </div>
+    <div class="details">
+      <h1>Movie Details</h1>
+      <h2>{{ movie.Title }}</h2>
+      <p><strong>Genre:</strong> {{ movie.Genre }}</p>
+      <p><strong>Tags:</strong> {{ movie.Tags }}</p>
+      <p><strong>Languages:</strong> {{ movie.Languages }}</p>
+      <p><strong>Runtime:</strong> {{ movie.Runtime }}</p>
+      <p><strong>Director:</strong> {{ movie.Director }}</p>
+      <p><strong>Writer:</strong> {{ movie.Writer }}</p>
+      <p><strong>Actors:</strong> {{ movie.Actors }}</p>
+      <p><strong>Boxoffice:</strong> {{ movie.Boxoffice }}</p>
+      <p><strong>Summary:</strong> {{ movie.Summary }}</p>
+    </div>
+  </div>
+</body>
+</html>

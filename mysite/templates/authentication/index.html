@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Netflix Movie Recommender</title>
+  <link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.min.js"></script>
+  <style>
+    body {
+      font-family: 'Helvetica Neue', Arial, sans-serif;
+      background-color: #1a1a1d;
+      color: #f5f5f5;
+      margin: 0;
+      padding: 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .container {
+      max-width: 800px;
+      margin-top: 50px;
+      padding: 30px;
+      background-color: #333;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+      border-radius: 10px;
+    }
+
+    h1 {
+      text-align: center;
+      color: #e50914;
+      font-size: 3em;
+      margin-bottom: 20px;
+    }
+
+    h2, h3, h4 {
+      color: #e50914;
+    }
+
+    label {
+      display: block;
+      margin-top: 20px;
+      font-weight: bold;
+    }
+
+    input[type="text"] {
+      width: 100%;
+      padding: 10px;
+      margin-top: 10px;
+      margin-bottom: 10px;
+      border: 1px solid #555;
+      border-radius: 5px;
+      box-sizing: border-box;
+      background-color: #444;
+      color: #fff;
+    }
+
+    button {
+      display: inline-block;
+      padding: 10px 20px;
+      margin-top: 10px;
+      background-color: #e50914;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      transition: background-color 0.3s;
+    }
+
+    button:hover {
+      background-color: #bf0411;
+    }
+
+    ul {
+      list-style-type: none;
+      padding: 0;
+    }
+
+    ul li {
+      background: #444;
+      margin: 5px 0;
+      padding: 10px;
+      border-radius: 5px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .form-group {
+      display: flex;
+      align-items: center;
+    }
+
+    .form-group input {
+      flex: 1;
+    }
+
+    .form-group button {
+      margin-left: 10px;
+    }
+
+    .remove-btn {
+      background-color: #dc3545;
+      padding: 5px 10px;
+      border: none;
+      border-radius: 5px;
+      color: white;
+      cursor: pointer;
+      transition: background-color 0.3s;
+    }
+
+    .remove-btn:hover {
+      background-color: #c82333;
+    }
+
+    .recommendations {
+      margin-top: 30px;
+    }
+
+    .recommendations ul li {
+      background: #333;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 20px;
+      transition: transform 0.3s;
+    }
+
+    .recommendations ul li:hover {
+      transform: scale(1.05);
+    }
+
+    .recommendations ul li img {
+      max-width: 100%;
+      border-radius: 5px;
+    }
+
+    .auth-buttons {
+      display: flex;
+      justify-content: center;
+      margin-top: 20px;
+    }
+
+    .auth-buttons a {
+      display: inline-block;
+      padding: 10px 20px;
+      margin: 5px;
+      background-color: #e50914;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      text-decoration: none;
+      text-align: center;
+      transition: background-color 0.3s;
+    }
+
+    .auth-buttons a:hover {
+      background-color: #bf0411;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="container">
+    {% for message in messages %}
+    <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+      <strong> MESSAGE:</strong> {{ message }}
+      <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+        <span aria-hidden="true">&times;</span>
+      </button>
+    </div>
+    {% endfor %}
+    <h1>Netflix Movie Recommender</h1>
+    {% if user.is_authenticated %}
+    <h3>Hello {{ user.first_name }} </h3>
+    <h4>You are logged in!</h4>
+    <form method="post" action="{% url 'recommend' %}">
+      {% csrf_token %}
+      <div class="form-group">
+        <label for="movie_titles">Movie Titles:</label>
+        <input type="text" id="movie_titles" name="movie_title" placeholder="Start typing...">
+        <button type="button" id="add_movie">Enter</button>
+      </div>
+      <ul id="selected_movies"></ul>
+
+      <div class="form-group">
+        <label for="preferred_languages">Preferred Languages:</label>
+        <input type="text" id="preferred_languages" name="preferred_language" placeholder="Start typing...">
+        <button type="button" id="add_language">Enter</button>
+      </div>
+      <ul id="selected_languages"></ul>
+
+      <!-- Hidden inputs to store the selected movies and languages -->
+      <input type="hidden" id="selected_movies_input" name="selected_movies">
+      <input type="hidden" id="selected_languages_input" name="selected_languages">
+
+      <button type="submit">Get Recommendations</button>
+    </form>
+    {% if recommendations %}
+    <div class="recommendations">
+      <h2>Recommendations: </h2>
+      <ul>
+        {% for movie in recommendations %}
+        <li>
+          <a href="{% url 'details' movie.Title %}">
+          <h3>{{ movie.Title }}</h3>
+          <img src="{{ movie.Image }}" alt="{{ movie.Title }}">
+          </a>
+        </li>
+        {% endfor %}
+      </ul>
+    </div>
+    {% endif %}
+    <div class="auth-buttons">
+      <a href="{% url 'signout' %}">Signout</a>
+    </div>
+    {% else %}
+    <div class="auth-buttons">
+      <a href="{% url 'signup' %}">Signup</a>
+      <a href="{% url 'signin' %}">Signin</a>
+    </div>
+    {% endif %}
+  </div>
+  <script>
+    $(function() {
+      var movieTitles = {{ movie_list|safe }};
+      var languages = {{ language_list|safe }};
+      
+      $("#movie_titles").autocomplete({
+        source: movieTitles,
+        minLength: 2
+      });
+
+      $("#preferred_languages").autocomplete({
+        source: languages,
+        minLength: 2
+      });
+
+      var selectedMovies = [];
+      var selectedLanguages = [];
+
+      $("#add_movie").on("click", function() {
+        var movie = $("#movie_titles").val();
+        if (movie && !selectedMovies.includes(movie)) {
+          selectedMovies.push(movie);
+          var movieItem = $("<li>" + movie + "<button class='remove-btn'>Remove</button></li>");
+          movieItem.find(".remove-btn").on("click", function() {
+            var index = selectedMovies.indexOf(movie);
+            if (index > -1) {
+              selectedMovies.splice(index, 1);
+            }
+            movieItem.remove();
+            updateHiddenInputs();
+          });
+          $("#selected_movies").append(movieItem);
+          $("#movie_titles").val('');
+          updateHiddenInputs();
+        }
+      });
+
+      $("#add_language").on("click", function() {
+        var language = $("#preferred_languages").val();
+        if (language && !selectedLanguages.includes(language)) {
+          selectedLanguages.push(language);
+          var languageItem = $("<li>" + language + "<button class='remove-btn'>Remove</button></li>");
+          languageItem.find(".remove-btn").on("click", function() {
+            var index = selectedLanguages.indexOf(language);
+            if (index > -1) {
+              selectedLanguages.splice(index, 1);
+            }
+            languageItem.remove();
+            updateHiddenInputs();
+          });
+          $("#selected_languages").append(languageItem);
+          $("#preferred_languages").val('');
+          updateHiddenInputs();
+        }
+      });
+
+      function updateHiddenInputs() {
+        $("#selected_movies_input").val(selectedMovies.join(","));
+        $("#selected_languages_input").val(selectedLanguages.join(","));
+      }
+    });
+  </script>
+</body>
+
+</html>
