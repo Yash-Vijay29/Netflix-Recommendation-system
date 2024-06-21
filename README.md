@@ -1,5 +1,4 @@
 First project ever, im building a netflix recommendation program based on a NetflixDataset
-The recommendation system uses a hybrid model
 using TF-IDF for content-based filtering and matrix factorization for collaborative filtering
 VARIABLES UNDER CONSIDERATION:
 For TF-IDF (Content-Based Filtering):
